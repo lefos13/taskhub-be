@@ -1,0 +1,189 @@
+###
+# NestJS API Tests
+# Use the REST Client extension to run these requests
+# Click "Send Request" above each request or use Ctrl+Alt+R (Cmd+Alt+R on Mac)
+###
+
+### Variables
+@baseUrl = http://localhost:3000/v1
+@contentType = application/json
+
+###############################################################################
+# AUTHENTICATION ENDPOINTS
+###############################################################################
+
+### 1. Generate JWT Token - Valid Device ID
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+  "deviceId": "device-123"
+}
+
+### 2. Generate JWT Token - Another Device
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+  "deviceId": "mobile-device-456"
+}
+
+### 3. Generate JWT Token - Invalid Request (Empty Device ID)
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+  "deviceId": ""
+}
+
+### 4. Generate JWT Token - Invalid Request (Missing Device ID)
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+}
+
+###############################################################################
+# PROTECTED ENDPOINTS (Require JWT Token)
+# Note: Replace YOUR_JWT_TOKEN with an actual token from the auth/token endpoint
+###############################################################################
+
+### 5. Get Profile - With Valid Token
+# First, run the "Generate JWT Token" request above and copy the token
+GET {{baseUrl}}/protected/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImRldmljZS0xMjMiLCJpYXQiOjE3NjAxMzE5NDgsImV4cCI6MTc2MDEzNTU0OH0.H68j1_S4mT9Zlr4nnbaCQybi1fr0DPSEUUnOvkjXxww
+
+### 6. Get Device Info - With Valid Token
+GET {{baseUrl}}/protected/device-info
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImRldmljZS0xMjMiLCJpYXQiOjE3NjAxMzE5NDgsImV4cCI6MTc2MDEzNTU0OH0.H68j1_S4mT9Zlr4nnbaCQybi1fr0DPSEUUnOvkjXxww
+
+### 7. Get Profile - Without Token (Should Fail)
+GET {{baseUrl}}/protected/profile
+
+### 8. Get Profile - With Invalid Token (Should Fail)
+GET {{baseUrl}}/protected/profile
+Authorization: Bearer invalid.token.here
+
+### 9. Get Profile - With Malformed Token (Should Fail)
+GET {{baseUrl}}/protected/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6ImRldmljZS0xMjMiLCJpYXQiOjE3NjAxMzE5NDgsImV4cCI6MTc2MDEzNTU0OH0.H68j1_S4mT9Zlr4nnbaCQybi1fr0DPSEUUnOvkjXxwws
+
+###############################################################################
+# APP ENDPOINTS (Default)
+###############################################################################
+
+### 10. Get Hello Message
+GET {{baseUrl}}/
+Accept: application/json
+
+###############################################################################
+# WORKFLOW EXAMPLE
+###############################################################################
+
+### Step 1: Generate a token
+# @name generateToken
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+  "deviceId": "workflow-device-789"
+}
+
+### Step 2: Use the generated token automatically
+# The token from the previous request is automatically captured
+@authToken = {{generateToken.response.body.data.token}}
+
+### Step 3: Access protected profile with auto-captured token
+GET {{baseUrl}}/protected/profile
+Authorization: Bearer {{authToken}}
+
+### Step 4: Access device info with auto-captured token
+GET {{baseUrl}}/protected/device-info
+Authorization: Bearer {{authToken}}
+
+###############################################################################
+# TESTING SCENARIOS
+###############################################################################
+
+### Test Case 1: Token Expiration
+# Generate a token with short expiration (if you modify the JWT_EXPIRES_IN env)
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+  "deviceId": "expiration-test-device"
+}
+
+### Test Case 2: Multiple Device Tokens
+# @name device1Token
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+  "deviceId": "device-001"
+}
+
+###
+# @name device2Token
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+  "deviceId": "device-002"
+}
+
+###
+# Use device 1 token
+@token1 = {{device1Token.response.body.data.token}}
+GET {{baseUrl}}/protected/profile
+Authorization: Bearer {{token1}}
+
+###
+# Use device 2 token
+@token2 = {{device2Token.response.body.data.token}}
+GET {{baseUrl}}/protected/profile
+Authorization: Bearer {{token2}}
+
+###############################################################################
+# PERFORMANCE TESTS
+###############################################################################
+
+### Multiple Token Generations (Run multiple times)
+POST {{baseUrl}}/auth/token
+Content-Type: {{contentType}}
+
+{
+  "deviceId": "performance-test-{{$randomInt}}"
+}
+
+###############################################################################
+# NOTES
+###############################################################################
+# 1. Make sure your NestJS server is running: npm run start:dev
+# 2. The server should be accessible at http://localhost:3000
+# 3. Click "Send Request" above any ### separator to execute that request
+# 4. Results will appear in a separate panel
+# 5. You can chain requests using @name and {{requestName.response.body.path}}
+# 6. Use {{$randomInt}} for random integers, {{$guid}} for GUIDs
+# 7. Swagger API Documentation available at: http://localhost:3000/api-docs
+###############################################################################
+
+###############################################################################
+# HEALTH & METRICS ENDPOINTS
+###############################################################################
+
+### Health Check - Comprehensive
+GET {{baseUrl}}/health
+Accept: application/json
+
+### Health Check - Liveness Probe
+GET {{baseUrl}}/health/liveness
+Accept: application/json
+
+### Health Check - Readiness Probe
+GET {{baseUrl}}/health/readiness
+Accept: application/json
+
+### Prometheus Metrics
+GET {{baseUrl}}/metrics
+Accept: text/plain

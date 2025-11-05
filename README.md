@@ -39,6 +39,41 @@ The backend follows a modular NestJS architecture with:
 
 For detailed architecture and implementation plan, see `projectplan/plan.md`.
 
+## Quick Start
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- Docker and Docker Compose
+- Git
+
+### Development Setup
+
+```bash
+# Clone and setup the development environment
+git clone <repository-url>
+cd taskhub-be
+npm run dev:setup
+
+# Start the application
+npm run start:dev
+```
+
+The setup script will automatically:
+
+- Start PostgreSQL and Redis containers
+- Install dependencies
+- Run database migrations
+- Verify all services are ready
+
+**Available Services:**
+
+- Application: http://localhost:3000
+- API Documentation: http://localhost:3000/api-docs
+- pgAdmin: http://localhost:8080 (admin@example.com / admin123)
+
+For detailed development instructions, see [Development Guide](docs/DEVELOPMENT.md).
+
 ## Template Features
 
 This project is built on a robust, production-ready NestJS template that provides:

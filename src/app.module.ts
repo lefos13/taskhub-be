@@ -11,6 +11,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { DatabaseModule } from './database/database.module';
+import { UsersModule } from './users/users.module';
 import { EnvironmentVariables } from './config/environment.validation';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
@@ -110,6 +111,7 @@ import { validateSync } from 'class-validator';
     }),
     AuthModule,
     HealthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [

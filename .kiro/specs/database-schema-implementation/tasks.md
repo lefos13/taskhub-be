@@ -7,15 +7,15 @@
   - Add .env file relevant to the requirements.
   - _Requirements: 1.1, 9.5, 10.5_
 
-- [ ] 2. Implement core user management entity
-  - [ ] 2.1 Create User entity with TypeORM decorators and validation
+- [x] 2. Implement core user management entity
+  - [x] 2.1 Create User entity with TypeORM decorators and validation
     - Implement User entity class with UUID primary key, email, password, role fields
     - Add TypeORM decorators for columns, relationships, and constraints
     - Implement UserRole enumeration with admin, manager, member values
     - Add class-validator decorators for email and password validation
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-  - [ ] 2.2 Create user entity migration file
+  - [x] 2.2 Create user entity migration file
     - Generate TypeORM migration for User entity creation
     - Include unique email constraint and role enumeration
     - Add database indexes for email and role columns

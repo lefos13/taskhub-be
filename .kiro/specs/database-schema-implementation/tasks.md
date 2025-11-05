@@ -27,15 +27,15 @@
     - Validate email uniqueness and password hashing requirements
     - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 3. Implement project management entity
-  - [ ] 3.1 Create Project entity with status tracking
+- [x] 3. Implement project management entity
+  - [x] 3.1 Create Project entity with status tracking
     - Implement Project entity with UUID, name, description, dates, status fields
     - Add ProjectStatus enumeration with active, completed, on_hold values
     - Implement date validation ensuring end date is after start date
     - Add audit timestamps and soft delete capabilities
     - _Requirements: 2.1, 2.2, 2.3, 2.5_
 
-  - [ ] 3.2 Create project entity migration file
+  - [x] 3.2 Create project entity migration file
     - Generate TypeORM migration for Project entity creation
     - Include status enumeration and date constraints
     - Add database indexes for status and date columns

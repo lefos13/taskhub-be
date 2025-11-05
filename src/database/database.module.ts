@@ -48,9 +48,13 @@ import { DatabaseService } from './database.service';
           logging:
             configService.get<string>('DB_LOGGING') === 'true' && !isProduction,
           // Entities path (will be set when entities are created)
-          entities: [process.cwd() + '/src/**/*.entity{.ts,.js}'],
+          entities: isProduction
+            ? [__dirname + '/../**/*.entity.js']
+            : [__dirname + '/../**/*.entity.ts'],
           // Migrations path
-          migrations: [process.cwd() + '/src/migrations/*{.ts,.js}'],
+          migrations: isProduction
+            ? [__dirname + '/../migrations/*.js']
+            : [__dirname + '/../migrations/*.ts'],
           migrationsRun: false, // Don't run migrations automatically
           // SSL configuration for production
           ssl: isProduction

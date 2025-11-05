@@ -10,6 +10,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
+import { DatabaseModule } from './database/database.module';
 import { EnvironmentVariables } from './config/environment.validation';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
@@ -29,6 +30,7 @@ import { validateSync } from 'class-validator';
  * @imports
  * - `LoggerModule`: Provides structured logging using Pino, with pretty-printing in non-production environments.
  * - `ConfigModule`: Loads and validates environment variables globally using a custom validation schema.
+ * - `DatabaseModule`: Configures TypeORM with PostgreSQL database connection and connection pooling.
  * - `ThrottlerModule`: Applies global rate limiting to incoming requests.
  * - `TerminusModule`: Enables health check endpoints.
  * - `HttpModule`: Provides HTTP client capabilities.
@@ -88,6 +90,8 @@ import { validateSync } from 'class-validator';
         return validatedConfig;
       },
     }),
+    // Database connection
+    DatabaseModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // 60 seconds

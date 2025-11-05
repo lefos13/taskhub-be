@@ -4,6 +4,7 @@ import {
   MinLength,
   IsIn,
   IsOptional,
+  IsNumberString,
 } from 'class-validator';
 
 export class EnvironmentVariables {
@@ -28,4 +29,33 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   CORS_ORIGIN?: string = '*';
+
+  // Database configuration
+  @IsString()
+  @IsNotEmpty()
+  DB_HOST: string;
+
+  @IsNumberString()
+  @IsNotEmpty()
+  DB_PORT: string;
+
+  @IsString()
+  @IsNotEmpty()
+  DB_USERNAME: string;
+
+  @IsString()
+  @IsNotEmpty()
+  DB_PASSWORD: string;
+
+  @IsString()
+  @IsNotEmpty()
+  DB_NAME: string;
+
+  @IsString()
+  @IsOptional()
+  DB_SYNCHRONIZE?: string = 'false';
+
+  @IsString()
+  @IsOptional()
+  DB_LOGGING?: string = 'false';
 }

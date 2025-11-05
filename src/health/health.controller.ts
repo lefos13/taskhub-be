@@ -8,6 +8,7 @@ import {
   MemoryHealthIndicator,
   DiskHealthIndicator,
 } from '@nestjs/terminus';
+import { DatabaseService } from '../database/database.service';
 
 @ApiTags('health')
 @Controller('health')
@@ -25,6 +26,7 @@ export class HealthController {
     private http: HttpHealthIndicator,
     private memory: MemoryHealthIndicator,
     private disk: DiskHealthIndicator,
+    private database: DatabaseService,
   ) {}
 
   /**
@@ -70,6 +72,18 @@ export class HealthController {
           path: 'C:\\',
           thresholdPercent: 0.5,
         }),
+      // Check database connection
+      async () => {
+        const isConnected = await this.database.testConnection();
+        return {
+          database: {
+            status: isConnected ? 'up' : 'down',
+            message: isConnected
+              ? 'Database connection is healthy'
+              : 'Database connection failed',
+          },
+        };
+      },
     ]);
   }
 
@@ -129,11 +143,21 @@ export class HealthController {
   })
   @ApiResponse({ status: 503, description: 'Application is not ready' })
   readiness() {
-    // Readiness check - includes memory and (optionally) external dependencies
+    // Readiness check - includes memory and external dependencies (database)
     return this.health.check([
       () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
-      // Add database check here when you have a database
-      // () => this.db.pingCheck('database'),
+      // Database connection check for readiness
+      async () => {
+        const isConnected = await this.database.testConnection();
+        return {
+          database: {
+            status: isConnected ? 'up' : 'down',
+            message: isConnected
+              ? 'Database is ready'
+              : 'Database is not ready',
+          },
+        };
+      },
     ]);
   }
 }
